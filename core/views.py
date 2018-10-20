@@ -39,9 +39,12 @@ def addPerson(request):
 			print(type(ContentFile(image)))
 			temp.save()
 		except Exception as e:
-			return HttpResponse(e)
+			response = dict()
+			response['status'] = 'ERROR'
+			response['message'] = e
+			return HttpResponse(json.dumps(response))
 
-		return HttpResponse('Successfully added ' + temp.name)
+		return HttpResponse(json.dumps({'status': 'OK'}))
 
 @csrf_exempt
 def comparePerson(request):
