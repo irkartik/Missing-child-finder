@@ -10,6 +10,11 @@ import numpy as np
 import json
 import base64
 from tempfile import TemporaryFile
+import string
+import random
+
+def id_generator(size=10, chars=string.ascii_uppercase + string.digits):
+	return ''.join(random.choice(chars) for _ in range(size))
 
 
 @csrf_exempt
@@ -29,7 +34,8 @@ def addPerson(request):
 
 		try:
 			temp = Person.objects.create(name = name, age = age, parentContactNumber = parentContactNumber, address = address, height = height, weight = weight, place_of_missing = place_of_missing, fathersName = fathersName, nearest_police_station= nearest_police_station, complexion=complexion)
-			temp.image.save('absc.jpeg', ContentFile(image))
+			filename = id_generator()
+			temp.image.save(filename + '.png', ContentFile(image))
 			print(type(ContentFile(image)))
 			temp.save()
 		except Exception as e:
@@ -46,7 +52,8 @@ def comparePerson(request):
 	print('data type ', type(data))
 	buf = BytesIO(data)
 	buf.seek(0, 2)
-	image = InMemoryUploadedFile(buf, "image", "some_filename.png", None, buf.tell(), None)
+	filename = id_generator()
+	image = InMemoryUploadedFile(buf, "image", filename + ".png", None, buf.tell(), None)
 	
 	image_input = face_recognition.load_image_file(image)
 	encoded_input = face_recognition.face_encodings(image_input)[0]
