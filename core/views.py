@@ -44,7 +44,8 @@ def addPerson(request):
 			response['message'] = e
 			return HttpResponse(json.dumps(response))
 
-		return HttpResponse(json.dumps({'status': 'OK'}))
+		msg = 'Successfully added ' + temp.name
+		return HttpResponse(json.dumps({'status': msg}))
 
 @csrf_exempt
 def comparePerson(request):
@@ -92,5 +93,31 @@ def comparePerson(request):
 			final['children'] = matched
 		else:
 			final['status'] = 'not found'
+	return HttpResponse(json.dumps(final))
+
+def getAll(request):
+	final = dict()
+	matched = list()
+	for person in Person.objects.all():
+		dic = {}
+		dic['name'] = person.name
+		dic['image_url'] = person.image.url
+		dic['father_name'] = person.fathersName
+		dic['contact'] = person.parentContactNumber
+		dic['age'] = person.age
+		dic['nearest_police_station'] = person.nearest_police_station
+		dic['date_of_missing'] = person.date_of_missing
+		dic['place_of_missing'] = person.place_of_missing
+		dic['height'] = person.height
+		dic['weight'] = person.weight
+		dic['complexion'] = person.complexion
+		dic['address'] = person.address
+
+		matched.append(dic)
+	if len(matched) > 0:
+		final['status'] = 'Found'
+		final['children'] = matched
+	else:
+		final['status'] = 'Not Found'
 	return HttpResponse(json.dumps(final))
 
