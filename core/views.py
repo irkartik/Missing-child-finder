@@ -46,7 +46,7 @@ def addPerson(request):
 			except Exception as e:
 				print('No Face Detected')
 				temp.delete()
-				return HttpResponse({'status': 'face not detected'})
+				return HttpResponse(json.dumps({'status': 'face not detected'}))
 			temp.save()
 		except Exception as e:
 			response = dict()
