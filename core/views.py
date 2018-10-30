@@ -32,11 +32,19 @@ def addPerson(request):
 		image = base64.b64decode(request.POST.get('image')) #request.FILES['image'].encode()))
 		place_of_missing = request.POST.get('place_of_missing')
 
+
 		try:
 			temp = Person.objects.create(name = name, age = age, parentContactNumber = parentContactNumber, address = address, height = height, weight = weight, place_of_missing = place_of_missing, fathersName = fathersName, nearest_police_station= nearest_police_station, complexion=complexion)
 			filename = id_generator()
 			temp.image.save(filename + '.png', ContentFile(image))
 			print(type(ContentFile(image)))
+
+			target_image_path = temp.image.path
+			target_image = face_recognition.load_image_file(target_image_path)
+			try:
+				encoded_target = face_recognition.face_encodings(target_image)[0]
+			except Exception as e:
+				return HttpResponse({'status': 'face not detected'})
 			temp.save()
 		except Exception as e:
 			response = dict()
