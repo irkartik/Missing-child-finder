@@ -44,7 +44,8 @@ def addPerson(request):
 			try:
 				encoded_target = face_recognition.face_encodings(target_image)[0]
 			except Exception as e:
-				print('no face detected')
+				print('No Face Detected')
+				temp.delete()
 				return HttpResponse({'status': 'face not detected'})
 			temp.save()
 		except Exception as e:
